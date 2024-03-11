@@ -6,11 +6,11 @@ if (argsnumber === 2)
 {
 	console.log("No argument");
 }
-else if (argsnumber === 3)
+  else if (argsnumber === 3)
 {
 	console.log("Argument found");
 }
-else 
+  else 
 {
 	console.log("Arguments found");
 }
