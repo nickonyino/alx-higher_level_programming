@@ -1,21 +1,25 @@
-#!/usr/bin/env python3
-import requests
+#!/usr/bin/python3
+"""
+The python script takes a letter and sends a POST request
+to http://0.0.0.0:5000/search_user using the letter as a parameter
+"""
 import sys
+import requests
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python3 script.py <username> <token>")
-        sys.exit(1)
-
-    username = sys.argv[1]
-    password = sys.argv[2]
-
-    url = "https://api.github.com/user"
-    response = requests.get(url, auth=(username, password))
-
-    if response.status_code == 200:
-        data = response.json()
-        print("Your GitHub id is:", data['id'])
+    if len(sys.argv) == 1:
+        q = ""
     else:
-        print("Failed to retrieve GitHub id. Status code:", response.status_code)
+        q = sys.argv[1]
 
+    payload = {"q": q}
+    response = requests.post("http://0.0.0.0:5000/search_user", data=payload)
+
+    try:
+        json_data = response.json()
+        if json_data:
+            print("[{}] {}".format(json_data.get("id"), json_data.get("name")))
+        else:
+            print("No result")
+    except ValueError:
+        print("Not a valid JSON")
