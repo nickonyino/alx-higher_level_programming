@@ -1,4 +1,8 @@
 #!/usr/bin/python3
+"""
+the python script that is taking in a URL, sends  requests to the URL and
+displaying the body of the response (decoded in utf-8).
+"""
 import urllib.request
 import urllib.error
 import sys
@@ -7,6 +11,8 @@ if __name__ == "__main__":
     url = sys.argv[1]
     try:
         with urllib.request.urlopen(url) as response:
-            print(response.read().decode('utf-8'))
+            body = response.read().decode('utf-8')
+            print(body)
+
     except urllib.error.HTTPError as e:
-        print("Error code:", e.code)
+        print("Error code: {}".format(e.code))
