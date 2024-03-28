@@ -1,25 +1,24 @@
 #!/usr/bin/python3
 """
-The python script takes a letter and sends a POST request
-to http://0.0.0.0:5000/search_user using the letter as a parameter
+Python script that retrieves the 10 most recent commits of a GitHub repository
 """
-import sys
+
 import requests
+import sys
 
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        q = ""
+    repo_name = sys.argv[1]
+    owner_name = sys.argv[2]
+
+    url = f"https://api.github.com/repos/{owner_name}/{repo_name}/commits"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        commits = response.json()[:10]  # Get the 10 most recent commits
+        for commit in commits:
+            sha = commit['sha']
+            author_name = commit['commit']['author']['name']
+            print(f"{sha}: {author_name}")
     else:
-        q = sys.argv[1]
+        print("Error fetching commits:", response.status_code)
 
-    payload = {"q": q}
-    response = requests.post("http://0.0.0.0:5000/search_user", data=payload)
-
-    try:
-        json_data = response.json()
-        if json_data:
-            print("[{}] {}".format(json_data.get("id"), json_data.get("name")))
-        else:
-            print("No result")
-    except ValueError:
-        print("Not a valid JSON")
