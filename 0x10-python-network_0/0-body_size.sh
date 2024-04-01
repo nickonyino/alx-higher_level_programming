@@ -1,3 +1,3 @@
 #!/bin/bash
-# Sending a GET request to a URL with curl, and display the body of the response
-curl -sL "$1"
+# Get comtent-lenght of a giving IP Address
+curl -sI "$1" | awk '/Content-Length/{print $2}'
