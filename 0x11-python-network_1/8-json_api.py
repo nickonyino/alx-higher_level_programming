@@ -1,25 +1,43 @@
 #!/usr/bin/python3
 """
-Script taking  a letter and sends a POST request
-to http://0.0.0.0:5000/search_user with  letter as a parameter
+The module that access the GitHub API and uses its information
 """
-import sys
 import requests
+from requests.auth import HTTPBasicAuth
+from sys import argv
+
+
+def main(argv):
+    """
+    The function that list 10 commits (from the most recent to oldest)
+    of the repository.The first argument will be the repository name
+    and the second argument is the owner name
+    """
+
+    def print_commits(i, commit_list):
+        """
+        List the commits, less than 10 commits
+        """
+        sha = commit_list[i].get('sha')
+        commit = commit_list[i].get('commit')
+        author = commit.get('author')
+        name = author.get('name')
+        print('{}: {}'.format(sha, name))
+
+    repo = argv[1]
+    owner = argv[2]
+    headers = {"Accept": "application/vnd.github.v3+json"}
+    response = requests.get('https://api.github.com/repos/' + owner +
+                            '/' + repo + '/commits', headers=headers)
+    commit_list = response.json()
+    size = len(commit_list)
+    if size < 10:
+        for i in range(0, size):
+            print_commits(i, commit_list)
+    else:
+        for i in range(0, 10):
+            print_commits(i, commit_list)
+
 
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        q = ""
-    else:
-        q = sys.argv[1]
-
-    payload = {"q": q}
-    response = requests.post("http://0.0.0.0:5000/search_user", data=payload)
-
-    try:
-        json_data = response.json()
-        if json_data:
-            print("[{}] {}".format(json_data.get("id"), json_data.get("name")))
-        else:
-            print("No result")
-    except ValueError:
-        print("Not a valid JSON")
+    main(argv)
